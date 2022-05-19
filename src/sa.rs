@@ -1,8 +1,8 @@
 use crate::qap::*;
 use crate::utils::*;
 use rand::Rng;
+use std::sync::MutexGuard;
 use std::time;
-
 
 pub struct SimulatedAnnealing {
     size: usize,
@@ -21,7 +21,6 @@ impl SimulatedAnnealing {
         initial_solutions_count: usize,
         level_length_factor: f64,
         temp_reduction: f64,
-       
     ) -> Self {
         SimulatedAnnealing {
             size: size,
@@ -35,13 +34,26 @@ impl SimulatedAnnealing {
     }
 }
 
-pub fn solve(sa: &mut SimulatedAnnealing, time_limit: u64, w: &Vec<i32>, d: &Vec<i32>) {
+pub fn solve(
+    sa: &mut SimulatedAnnealing,
+    time_limit: u64,
+    w: &Vec<i32>,
+    d: &Vec<i32>,
+    v: &mut MutexGuard<Vec<Vec<usize>>>,
+) {
     let level_length = (sa.level_length_factor * (sa.size * sa.size - 1) as f64).ceil();
     //print_type_of(&level_length);
-    start_sa(sa, level_length, time_limit, w, d);
+    start_sa(sa, level_length, time_limit, w, d, v);
 }
 
-fn start_sa(sa: &mut SimulatedAnnealing, level_length: f64, time_limit: u64, w: &Vec<i32>, d: &Vec<i32>) {
+fn start_sa(
+    sa: &mut SimulatedAnnealing,
+    level_length: f64,
+    time_limit: u64,
+    w: &Vec<i32>,
+    d: &Vec<i32>,
+    v: &mut MutexGuard<Vec<Vec<usize>>>,
+) {
     let fitness = sa.fitness_function;
     println!("Starting SA");
     let mut solutions = Vec::with_capacity(sa.initial_solutions_count);
@@ -117,5 +129,5 @@ fn start_sa(sa: &mut SimulatedAnnealing, level_length: f64, time_limit: u64, w: 
             }
         }
     }
+    v.push(sa.best_individual.clone());
 }
-

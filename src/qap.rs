@@ -57,7 +57,7 @@ pub fn swap_two_elements(a: &mut Vec<usize>) -> Vec<usize> {
 }
 
 /// computes a new solution by swapping two elements n(perturbations) times
-pub fn perturbate_solution(mut solution: Vec<usize>, perturbations: i32) -> Vec<usize> {
+pub fn perturbate_solution(mut solution: Vec<usize>, perturbations: u8) -> Vec<usize> {
     for _ in 0..perturbations {
         solution = swap_two_elements(&mut solution);
     }
