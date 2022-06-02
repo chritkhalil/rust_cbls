@@ -1,6 +1,8 @@
 use crate::qap::*;
 use crate::utils::*;
 use rand::Rng;
+use std::sync::MutexGuard;
+use std::sync::{Arc, Mutex};
 use std::time;
 
 pub struct IteratedLocalSearch {
@@ -24,15 +26,27 @@ impl IteratedLocalSearch {
     }
 }
 
-pub fn solve(ils: &mut IteratedLocalSearch, time_limit: u64, w: &Vec<i32>, d: &Vec<i32>) {
+pub fn solve(
+    ils: &mut IteratedLocalSearch,
+    time_limit: u64,
+    w: &Vec<i32>,
+    d: &Vec<i32>,
+    sol_arc: &Arc<Mutex<Vec<Vec<usize>>>>,
+) {
     //let level_length = (ils.level_length_factor * (ils.size * ils.size - 1) as f64).ceil();
     //print_type_of(&level_length);
-    start_ils(ils, time_limit, w, d);
+    start_ils(ils, time_limit, w, d, sol_arc);
 }
 
-fn start_ils(ils: &mut IteratedLocalSearch, time_limit: u64, w: &Vec<i32>, d: &Vec<i32>) {
+fn start_ils(
+    ils: &mut IteratedLocalSearch,
+    time_limit: u64,
+    w: &Vec<i32>,
+    d: &Vec<i32>,
+    sol_arc: &Arc<Mutex<Vec<Vec<usize>>>>,
+) {
     let fitness = ils.fitness_function;
-    println!("Starting ILS");
+    println!("Starting Iterated Local Search");
 
     let restart_iterations = 50;
     let mut original_solution = Vec::with_capacity(ils.size as usize);
@@ -95,4 +109,6 @@ fn start_ils(ils: &mut IteratedLocalSearch, time_limit: u64, w: &Vec<i32>, d: &V
             prev_best_fitness = best_fitness;
         }
     }
+    let mut v = sol_arc.lock().unwrap();
+    v.push(ils.best_individual.clone());
 }

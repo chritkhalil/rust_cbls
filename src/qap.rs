@@ -6,7 +6,8 @@ use std::fs; // 0.6.5
 /// reads the QAP instance from the file
 pub fn read_instance() -> (usize, Vec<i32>, Vec<i32>) {
     let instance_name: &str = "had12.dat"; // bks = 1652, tai12a bks = 224416
-    let file: &str = "/Users/pro/development/CSP/instances/";
+                                           //let file: &str = "/Users/pro/development/CSP/instances/";
+    let file: &str = "data/qap/instances/";
     let file_name = format!("{}{}", file, instance_name);
 
     println!("Reading file: {}", file_name);
@@ -19,6 +20,7 @@ pub fn read_instance() -> (usize, Vec<i32>, Vec<i32>) {
         .filter(|s| !s.is_empty()) // (3)
         .map(|s| s.parse().unwrap()) // (4)
         .collect(); // (5)
+
     let n: usize = numbers[0] as usize;
     let _w = numbers[1..n * n + 1].to_vec();
     let _d = numbers[n * n + 1..n * n * 2 + 1].to_vec();
