@@ -21,18 +21,27 @@ mod ts;
 //use ts::TabuSearch;
 
 use std::sync::{Arc, Mutex};
-use std::thread;
 use std::time::Duration;
-fn main() {
-    // let (n, _w, _d) = read_instance();
+use std::{io, thread};
 
-    // let mut sa = SimulatedAnnealing::new(n, _fitness, 5, 0.25, 0.85);
-    // let mut ils = IteratedLocalSearch::new(n, _fitness);
-    //sa_solve(&mut sa, 60, &_w, &_d);
-    //solve(&mut ils, 60, &_w, &_d);
-    //spawn_threads();
-    //test_threads();
+fn main() -> io::Result<()> {
+    let n_available_threads = thread::available_parallelism()?.get();
+    assert!(n_available_threads >= 1_usize);
+    println!("Available threads: {}", n_available_threads);
+    let n_solvers = 2;
+    let threads_count = std::cmp::min(n_available_threads - 1, n_solvers);
+
     let (n, _w, _d) = read_instance();
+
+    let use_threading = true;
+
+    if !use_threading {
+        //let mut sol = vec![0; n];
+    } else {
+        test_threads(threads_count);
+    }
+
+    Ok(())
 }
 
 fn spawn_threads() {
@@ -69,7 +78,7 @@ fn spawn_threads() {
     println!("{:?}", solutions);
 }
 
-fn test_threads() {
+fn test_threads(threads_count: usize) {
     let solutions: Arc<Mutex<Vec<Vec<usize>>>> = Arc::new(Mutex::new(vec![]));
 
     //let (sender, receiver) = std::sync::mpsc::channel();
@@ -81,50 +90,21 @@ fn test_threads() {
         move || {
             let mut sa = SimulatedAnnealing::new(n, _fitness, 5, 0.25, 0.85);
             sa_solve(&mut sa, 2, &_w, &_d, &clone);
-            // for i in 0..100 {
-            //     println!("[{:?}] Sending: {}", std::thread::current().id(), i);
-            //     //sender.send(i).unwrap();
-            //     //std::thread::sleep(Duration::from_secs(1));
-            // }
         }
     });
-
-    // let ts_thread = std::thread::spawn({
-    //     let clone = Arc::clone(&solutions);
-    //     let (n, _w, _d) = read_instance();
-
-    //     move || {
-    //         let mut sa = SimulatedAnnealing::new(n, _fitness, 5, 0.25, 0.85);
-    //         sa_solve(&mut sa, 2, &_w, &_d, &clone);
-    //         // for i in 0..100 {
-    //         //     println!("[{:?}] Sending: {}", std::thread::current().id(), i);
-    //         //     //sender.send(i).unwrap();
-    //         //     //std::thread::sleep(Duration::from_secs(1));
-    //         // }
-    //     }
-    // });
 
     let ils_thread = std::thread::spawn({
         let clone = Arc::clone(&solutions);
         let (n, _w, _d) = read_instance();
 
         move || {
-            //let mut v = clone.lock().unwrap();
             let mut ils = IteratedLocalSearch::new(n, _fitness);
-            //solve(&mut ils, 10, &_w, &_d, &mut v);
             solve(&mut ils, 2, &_w, &_d, &clone);
-            // for i in 0..100 {
-            //     println!("[{:?}] Received: {}", std::thread::current().id(), i);
-            //     //sender.send(i).unwrap();
-            //     //std::thread::sleep(Duration::from_secs(1));
-            // }
-            // for i in receiver {
-            //     println!("[{:?}] Received: {}", std::thread::current().id(), i);
-            // }
         }
     });
 
     let _ = sa_thread.join();
+
     let _ = ils_thread.join();
     //let _ = ts_thread.join();
     println!("Done");

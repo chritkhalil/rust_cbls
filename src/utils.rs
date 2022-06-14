@@ -34,6 +34,7 @@ pub fn std_deviation(data: &[f64]) -> Option<f64> {
         _ => None,
     }
 }
+
 /// prints the type of a struct or variable for debugging purposes
 pub fn print_type_of<T>(_: &T) {
     println!("{}", std::any::type_name::<T>())

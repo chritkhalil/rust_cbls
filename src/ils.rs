@@ -111,4 +111,6 @@ fn start_ils(
     }
     let mut v = sol_arc.lock().unwrap();
     v.push(ils.best_individual.clone());
+    //threadedvector tv;
+    //v = tv.lock.unwrap;
 }
