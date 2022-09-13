@@ -109,7 +109,8 @@ fn start_sa(
                     current_fitness = new_fitness;
                 } else {
                     let u = rand::thread_rng().gen::<f64>();
-                    if u <= (-fitness_diff as f64 / temperature.unwrap()).exp() {
+                    if fitness_diff < 0 || u <= (-fitness_diff as f64 / temperature.unwrap()).exp()
+                    {
                         if new_fitness < best_fitness {
                             best_solution = new_solution.to_vec();
                             best_fitness = new_fitness;

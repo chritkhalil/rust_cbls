@@ -1,4 +1,5 @@
 use log::{debug, error, info, warn, LevelFilter};
+use std::io::Write;
 
 pub fn init() {
     //let _ = env_logger::builder().is_test(true).try_init();
@@ -18,6 +19,8 @@ pub fn init() {
         })
         .filter(Some("logger_example"), LevelFilter::Debug)
         .init();
+
+        info!("info");
 }
 
 pub fn debug(msg: &str) {
@@ -34,4 +37,20 @@ pub fn warn(msg: &str) {
 
 pub fn error(msg: &str) {
     error!("{}", msg);
+}
+
+macro_rules! warn {
+    ($($args:expr),*) => {{
+        $(
+            warn!("{}", $args);
+        )*
+    }}
+}
+
+macro_rules! info {
+    ($($args:expr),*) => {{
+        $(
+            info!("{}", $args);
+        )*
+    }}
 }

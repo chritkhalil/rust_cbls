@@ -9,12 +9,17 @@ use qap::*;
 mod utils;
 use utils::*;
 
+mod logger;
+use logger::*;
+
 mod sa;
 use sa::solve as sa_solve;
 use sa::SimulatedAnnealing;
 
 mod ils;
 use ils::*;
+
+mod operators;
 
 mod ts;
 //use ts::solve as ts_solve;
@@ -25,6 +30,7 @@ use std::time::Duration;
 use std::{io, thread};
 
 fn main() -> io::Result<()> {
+    logger::init();
     let n_available_threads = thread::available_parallelism()?.get();
     assert!(n_available_threads >= 1_usize);
     println!("Available threads: {}", n_available_threads);
@@ -79,6 +85,7 @@ fn spawn_threads() {
 }
 
 fn test_threads(threads_count: usize) {
+
     let solutions: Arc<Mutex<Vec<Vec<usize>>>> = Arc::new(Mutex::new(vec![]));
 
     //let (sender, receiver) = std::sync::mpsc::channel();
